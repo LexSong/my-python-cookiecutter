@@ -1,6 +1,6 @@
 [project]
 name = "my-python-cookiecutter"
-version = "0.1.0"
+version = "0.2.0"
 description = "Scaffold my Python projects"
 authors = [
     { name = "Lex Song", email = "LexSong.tw@gmail.com" }
