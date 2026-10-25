@@ -9,16 +9,18 @@ TEMPLATE = Path(__file__).parent / "template"
 
 
 def init(python: str = "3.14", torch: Annotated[bool, typer.Option("--torch")] = False):
-    """Scaffold a uv package in the current directory, with my tool config and pre-commit."""
+    """Scaffold a uv project in the current directory, with my tool config and pre-commit."""
     pyproject = Path("pyproject.toml")
     if pyproject.exists():
         typer.echo("pyproject.toml already exists", err=True)
         raise typer.Exit(1)
 
     # uv init writes everything that differs per project: name, requires-python,
-    # .python-version, src/ layout, git init, and a uv_build pin matching the
+    # .python-version, src/<name>/, git init, and a uv_build pin matching the
     # installed uv. The template only appends what every project shares.
-    subprocess.run(["uv", "init", "--package", "--no-readme", "--python", python], check=True)
+    # --lib writes [build-system] but no [project.scripts] command: scripts go in
+    # scripts/ and import src/<name>/, which uv installs editable on every sync.
+    subprocess.run(["uv", "init", "--lib", "--no-readme", "--python", python], check=True)
     append(pyproject, TEMPLATE / "tools.toml")
 
     # The index must be in pyproject.toml before `uv add`, or torch resolves
