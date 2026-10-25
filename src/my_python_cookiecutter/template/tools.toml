@@ -1,0 +1,12 @@
+
+[tool.pyright]
+# Point Pyright (Claude Code / CLI / CI) at the uv-managed .venv. neovim resolves
+# it via before_init instead; both agree on ./.venv, so no conflict.
+venvPath = "."
+venv = ".venv"
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint.isort]
+force-single-line = true

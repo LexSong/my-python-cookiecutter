@@ -1,0 +1,28 @@
+[project]
+name = "my-python-cookiecutter"
+version = "0.1.0"
+description = "Scaffold my Python projects"
+authors = [
+    { name = "Lex Song", email = "LexSong.tw@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "typer>=0.27.3",
+]
+
+[project.scripts]
+my-cookiecutter = "my_python_cookiecutter.init:main"
+
+[build-system]
+requires = ["uv_build>=0.13.5,<0.14.0"]
+build-backend = "uv_build"
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint.isort]
+force-single-line = true

@@ -1,0 +1,11 @@
+
+# PyPI's Windows torch wheels are CPU-only. cu132 is the newest CUDA 13 index
+# with Windows wheels; check https://download.pytorch.org/whl/ before bumping.
+[[tool.uv.index]]
+name = "pytorch-cu132"
+url = "https://download.pytorch.org/whl/cu132"
+explicit = true
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu132" }]
+torchvision = [{ index = "pytorch-cu132" }]
