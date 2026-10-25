@@ -1,6 +1,5 @@
-# A finished diff is the only state worth rewriting mechanically, so formatting
-# runs here and nowhere else. pre-commit would otherwise fetch its own pinned
-# ruff and drift from the one on PATH, hence `local`/`system` hooks.
+# A remote hook repo makes pre-commit install its own pinned ruff, which drifts
+# from the ruff on PATH, so these hooks are `local`/`system`.
 repos:
   - repo: local
     hooks:
