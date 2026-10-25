@@ -44,7 +44,9 @@ def init(
 
 
 def append(target: Path, source: Path):
-    with target.open("a", encoding="utf-8") as f:
+    # Text mode on Windows writes "\n" as "\r\n", but uv init writes LF, so
+    # newline="" keeps the appended tables LF too.
+    with target.open("a", encoding="utf-8", newline="") as f:
         f.write(source.read_text(encoding="utf-8"))
 
 
