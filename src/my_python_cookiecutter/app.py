@@ -38,8 +38,6 @@ def init(
     # alone, so the project is not installed until `addlib`. The template only
     # appends what every project shares.
     subprocess.run(["uv", "init", "--bare", "--vcs", "git", "--python", python, str(path)], check=True)
-    # --frozen sets the version without locking or creating .venv.
-    subprocess.run(["uv", "version", "0.0.0", "--frozen"], cwd=path, check=True)
     append(pyproject, (TEMPLATE / "tools.toml").read_text(encoding="utf-8"))
 
     # The index must be in pyproject.toml before `uv add`, or torch resolves
