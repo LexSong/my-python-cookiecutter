@@ -62,6 +62,9 @@ A PEP 723 block (`# /// script ... ///`) lists a script's dependencies, and
 `uv add --script` writes it. `uv run scripts/x.py` builds the environment from that
 block alone.
 
+pyright does not read PEP 723 blocks, so it reports those dependencies as unresolved
+imports. This is a known limitation, so ignore these warnings.
+
 **2. Scripts and dependencies.** `my-cookiecutter init` writes this state:
 
 ```
