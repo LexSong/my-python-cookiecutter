@@ -1,4 +1,5 @@
 import difflib
+import importlib.metadata
 import re
 import shutil
 import subprocess
@@ -10,7 +11,10 @@ import typer
 
 TEMPLATE = Path(__file__).parent / "template"
 
-app = typer.Typer()
+app = typer.Typer(
+    help="Scaffold and check my Python projects. Run `my-cookiecutter readme` for the full context: layout, tooling, "
+    "and how to check a project."
+)
 
 
 def append(target: Path, text: str):
@@ -153,6 +157,14 @@ def check(path: Annotated[Path, typer.Argument()] = Path(".")):
         typer.echo(line)
     if found:
         raise typer.Exit(1)
+
+
+@app.command()
+def readme():
+    """Print the README: what my Python projects should look like, and why."""
+    # The wheel build copies README.md into the package metadata, so the
+    # installed tool carries the README that matches its own template.
+    typer.echo(importlib.metadata.metadata("my-python-cookiecutter").json["description"])
 
 
 def main():
