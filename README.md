@@ -50,7 +50,7 @@ A project has two parts, and each part is optional:
 gets `src/` and `[build-system]` only when it needs them. Each state below is
 valid; any other mix is an error.
 
-**1. Scripts only.** `my-cookiecutter add-formatter` and `add-pre-commit` write this
+**1. Scripts only.** `my-cookiecutter add-formatting` and `add-pre-commit` write this
 state:
 
 ```

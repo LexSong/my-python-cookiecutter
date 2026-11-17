@@ -26,7 +26,7 @@ def append(target: Path, text: str):
 
 
 @app.command()
-def add_formatter(path: Annotated[Path, typer.Argument()] = Path(".")):
+def add_formatting(path: Annotated[Path, typer.Argument()] = Path(".")):
     """Add my tool config to pyproject.toml in PATH. Needs no project table, so it also suits scripts that each carry their
     own dependencies in a PEP 723 block."""
     pyproject = path / "pyproject.toml"
@@ -87,7 +87,7 @@ def init(
     # alone, so the project is not installed until `add-lib`. The template only
     # appends what every project shares.
     subprocess.run(["uv", "init", "--bare", "--vcs", "git", "--python", python, str(path)], check=True)
-    add_formatter(path)
+    add_formatting(path)
     add_pre_commit(path)
 
     # The index must be in pyproject.toml before `uv add`, or torch resolves
