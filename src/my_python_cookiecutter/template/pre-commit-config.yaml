@@ -17,3 +17,8 @@ repos:
         language: system
         types_or: [python, pyi]
         require_serial: true
+      - id: taplo-format
+        name: taplo format
+        entry: taplo format
+        language: system
+        types: [toml]
