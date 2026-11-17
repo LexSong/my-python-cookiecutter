@@ -1,6 +1,6 @@
 [project]
 name = "my-python-cookiecutter"
-version = "0.3.1"
+version = "0.4.0"
 description = "Scaffold my Python projects"
 readme = "README.md"
 authors = [{ name = "Lex Song", email = "LexSong.tw@gmail.com" }]
