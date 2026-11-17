@@ -38,10 +38,31 @@ I work on Windows, and CUDA packages ship fewer Windows wheels than Linux ones.
 
 ## Layout
 
-A project starts with scripts and dependencies. It gets `src/` and `[build-system]`
-only when it needs them. Each state below is valid; any other mix is an error.
+A project has two parts, and each part is optional:
 
-**1. Scripts and dependencies.** `my-cookiecutter init` writes this state:
+- The **formatting setup** is the `[tool.*]` tables in `pyproject.toml` plus
+  pre-commit. Every repo with Python code needs it.
+- The **environment** is `[project]` with its dependencies. A repo needs it only when
+  its scripts share one environment. A repo may also hold only an environment, for
+  an app whose code lives elsewhere.
+
+`my-cookiecutter check` checks each part only in a repo that has it. A project
+gets `src/` and `[build-system]` only when it needs them. Each state below is
+valid; any other mix is an error.
+
+**1. Scripts only.** `my-cookiecutter add-formatter` and `add-pre-commit` write this
+state:
+
+```
+pyproject.toml   [tool.*] only, no [project]
+scripts/         each script carries its own dependencies in a PEP 723 block
+```
+
+A PEP 723 block (`# /// script ... ///`) lists a script's dependencies, and
+`uv add --script` writes it. `uv run scripts/x.py` builds the environment from that
+block alone.
+
+**2. Scripts and dependencies.** `my-cookiecutter init` writes this state:
 
 ```
 pyproject.toml   [project] with dependencies, no [build-system]
@@ -52,11 +73,10 @@ Without `[build-system]`, uv treats the project as a list of dependencies and in
 nothing of its own. Create `scripts/` with the first script, because git does not track
 an empty folder.
 
-A PEP 723 block (`# /// script ... ///`) takes precedence over the project. When a script
-carries one, `uv run` builds a separate environment from the block alone and ignores the
-project `.venv`.
+A PEP 723 block takes precedence over the project. When a script carries one,
+`uv run` ignores the project `.venv`.
 
-**2. Shared code.** When scripts need to share code, run `my-cookiecutter addlib`. It
+**3. Shared code.** When scripts need to share code, run `my-cookiecutter add-lib`. It
 adds an empty `src/<name>/__init__.py` and a `uv_build` `[build-system]`:
 
 ```
@@ -75,7 +95,7 @@ lives in its own GitHub repo, is installed with
 `uv tool install git+https://github.com/LexSong/<repo>`, and its AGENTS.md says it has
 a remote and wants pushes.
 
-**3. One file that must be installed.** A tool like yt-sub-txt is one `<name>.py` at
+**4. One file that must be installed.** A tool like yt-sub-txt is one `<name>.py` at
 the root, but `uv tool install` still needs a build backend. `uv_build` only builds a
 package folder, never a single file, so this case uses `flit_core` instead:
 
@@ -101,4 +121,5 @@ When code moves into or out of `src/`, change `[build-system]` in the same commi
 
 We rely on pre-commit for the final check: its hooks run the same formatters as
 conform.nvim on every commit, so nothing else needs to enforce formatting. The config
-file does nothing until `pre-commit install` has written the git hook; `init` runs it.
+file does nothing until `pre-commit install` has written the git hook;
+`add-pre-commit` runs it.
