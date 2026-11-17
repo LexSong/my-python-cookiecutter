@@ -17,8 +17,7 @@ shared config, so compare against it, not against a copy in a document.
 
 ## Tooling
 
-- **uv only.** I am moving every pixi project to uv. pixi files (`pixi.toml`,
-  `pixi.lock`, `.pixi/`) mean a project still needs to be migrated.
+- **uv**: I manage every project with uv: Python, `.venv` and dependencies.
 - **Python version**: the newest one that every dependency ships wheels for. In
   2026-10 that is 3.14. CUDA packages set the limit; see the next section.
 
@@ -28,11 +27,9 @@ I work on Windows, and CUDA packages ship fewer Windows wheels than Linux ones.
 
 - **Python version**: onnxruntime-gpu and triton-windows have no 3.15 `win_amd64`
   wheels, so Python stays on 3.14.
-- **CUDA libraries**: in a pixi migration, CUDA libraries that came from conda become
-  pip wheels, for example `onnxruntime-gpu[cuda,cudnn]`. Some NVIDIA wheels have no
-  Windows build, so the lock needs
+- **CUDA libraries** come as pip wheels, for example `onnxruntime-gpu[cuda,cudnn]`.
+  Some NVIDIA wheels have no Windows build, so the lock needs
   `[tool.uv] required-environments = ["sys_platform == 'win32' and platform_machine == 'AMD64'"]`.
-  division-2-face-tweaker is the working example.
 - **Torch**: PyPI's Windows torch wheels are CPU-only, so torch and torchvision come
   from an explicit CUDA index. The template names the newest CUDA 13 index with
   Windows wheels. Check <https://download.pytorch.org/whl/> before bumping.
