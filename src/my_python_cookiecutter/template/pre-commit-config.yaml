@@ -1,5 +1,10 @@
 # A remote hook repo makes pre-commit install its own pinned ruff, which drifts
-# from the ruff on PATH, so these hooks are `local`/`system`.
+# from the ruff on PATH, so these hooks are `local`/`system`. A pin per repo
+# suits a team that shares one repo. I work alone across many small repos, so
+# one ruff on PATH for all of them fits better. It also keeps conform.nvim and
+# pre-commit on the same binary. But a ruff update, such as one by topgrade,
+# can reformat code nobody touched. So when that happens, check for a ruff
+# update before blaming the edit.
 repos:
   - repo: local
     hooks:
