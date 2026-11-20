@@ -118,10 +118,7 @@ other config. The folder must match the project name; otherwise
 `[tool.uv.build-backend] module-name` has to name it.
 
 A command on PATH is a `[project.scripts]` entry pointing at a function in
-`src/<name>/`. Add it by hand only when a tool must run outside the repo. Such a tool
-lives in its own GitHub repo, is installed with
-`uv tool install git+https://github.com/LexSong/<repo>`, and its AGENTS.md says it has
-a remote and wants pushes.
+`src/<name>/`. Add it by hand only when a tool must run outside the repo.
 
 **4. One file that must be installed.** A tool like yt-sub-txt is one `<name>.py` at
 the root, but `uv tool install` still needs a build backend. `uv_build` only builds a
