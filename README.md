@@ -39,6 +39,12 @@ belongs inside another one, such as a uv workspace member, needs no
   libraries. A library supports old Python versions for its users, but an app only
   needs the Python it runs on. So `check` reports a lower bound older than
   `PYTHON_VERSION`, comparing major and minor only.
+- **`.python-version`**: we avoid using it. `requires-python` already states what
+  the project uses, so delete a `.python-version` when you find one, instead of
+  untracking or ignoring it. When a dependency has no wheel for a newer Python,
+  cap `requires-python` instead, such as `>=3.14,<3.15`, and name that dependency
+  in a comment. A project that really needs a `.python-version` says why in its
+  `AGENTS.md`.
 
 ## CUDA on Windows
 

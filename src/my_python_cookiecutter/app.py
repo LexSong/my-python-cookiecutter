@@ -238,6 +238,10 @@ def check(path: Annotated[Path, typer.Argument()] = Path(".")):
     found = []
     if "project" in project:
         found.extend(iter_environment_issues(path, project))
+    # We avoid using .python-version, because requires-python already states
+    # what the project uses. So check reports the file even when git ignores it.
+    if (path / ".python-version").exists():
+        found.append(".python-version exists; delete it, and use requires-python instead")
     files = subprocess.run(["git", "ls-files", "*.py"], cwd=path, capture_output=True, text=True, check=True)
     if files.stdout.strip():
         found.extend(iter_formatting_issues(path, project))
