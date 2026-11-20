@@ -12,6 +12,10 @@ import typer
 
 TEMPLATE = Path(__file__).parent / "template"
 
+# The Python version every project should use. init writes it, and check
+# reports a project whose requires-python allows an older one.
+PYTHON_VERSION = "3.14"
+
 app = typer.Typer(
     help="Scaffold and check my Python projects. Run `my-cookiecutter readme` for the full context: layout, tooling, "
     "and how to check a project."
@@ -71,7 +75,7 @@ def add_pre_commit(path: Annotated[Path, typer.Argument()] = Path(".")):
 @app.command()
 def init(
     path: Annotated[Path, typer.Argument()] = Path("."),
-    python: str = "3.14",
+    python: str = PYTHON_VERSION,
     torch: Annotated[bool, typer.Option("--torch")] = False,
 ):
     """Scaffold a uv project in PATH, with my tool config and pre-commit. Like `uv init`, PATH defaults to the current
@@ -144,7 +148,25 @@ def iter_setting_issues(template, project, key: str) -> Iterator[str]:
         yield f"{key} is {project!r}, template has {template!r}"
 
 
+def iter_requires_python_issues(spec: str | None) -> Iterator[str]:
+    """Yield each way spec differs from the form we allow: a >= lower bound, then an optional < upper bound."""
+    expected = f">={PYTHON_VERSION}"
+    if spec is None:
+        yield f"project.requires-python is missing; use {expected!r}"
+        return
+
+    # The other operators hide a range behind a convention, and >= with < can
+    # write every range they can, so we allow only these two.
+    match = re.fullmatch(r">=(\d+)\.(\d+)(?:\.\d+)?(?:,\s*<\d+(?:\.\d+)*)?", spec)
+    if match is None:
+        yield f"project.requires-python is {spec!r}; write a range with >= and an optional <, such as {expected!r}"
+    elif (int(match[1]), int(match[2])) < tuple(int(part) for part in PYTHON_VERSION.split(".")):
+        yield f"project.requires-python is {spec!r}, older than {PYTHON_VERSION}. Consider raising it."
+
+
 def iter_environment_issues(path: Path, project: dict) -> Iterator[str]:
+    yield from iter_requires_python_issues(project["project"].get("requires-python"))
+
     # A dependency string starts with the package name, such as "torch>=2.9".
     names = [re.split(r"[^\w.-]", dep, maxsplit=1)[0].lower() for dep in project["project"].get("dependencies", [])]
     if "torch" in names:

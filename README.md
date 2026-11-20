@@ -18,8 +18,21 @@ shared config, so compare against it, not against a copy in a document.
 ## Tooling
 
 - **uv**: I manage every project with uv: Python, `.venv` and dependencies.
-- **Python version**: the newest one that every dependency ships wheels for. In
-  2026-10 that is 3.14. CUDA packages set the limit; see the next section.
+- **Python version**: the newest one that every dependency ships wheels for.
+  `PYTHON_VERSION` in `app.py` holds it: `init` writes it, and `check` reports a
+  project whose `requires-python` allows an older one. CUDA packages set the
+  limit; see the next section.
+- **`requires-python`**: a range written with `>=` and an optional `<`, such as
+  `>=3.14`, `>=3.14.1` or `>=3.13,<3.14`. No other operator is allowed. The others
+  each hide a range behind a convention: `~=3.13` means `>=3.13,<4`, but
+  `~=3.13.0` means `>=3.13,<3.14`. And `==3.14` means 3.14.0 only, because PEP 440
+  pads a short version with zeros. `>=` and `<` can write every one of these
+  ranges, even one release, such as `>=3.14.2,<3.14.3`, so the meaning shows at a
+  glance.
+- **A recent lower bound**: most of my projects are apps and scripts, not
+  libraries. A library supports old Python versions for its users, but an app only
+  needs the Python it runs on. So `check` reports a lower bound older than
+  `PYTHON_VERSION`, comparing major and minor only.
 
 ## CUDA on Windows
 
