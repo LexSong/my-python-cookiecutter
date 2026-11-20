@@ -1,4 +1,11 @@
 
+# The NVIDIA library wheels behind torch do not all ship for Windows, so the
+# lock must pick versions that do.
+[tool.uv]
+required-environments = [
+  "sys_platform == 'win32' and platform_machine == 'AMD64'",
+]
+
 # PyPI's Windows torch wheels are CPU-only. cu132 is the newest CUDA 13 index
 # with Windows wheels; check https://download.pytorch.org/whl/ before bumping.
 [[tool.uv.index]]
