@@ -15,6 +15,12 @@ uv tool upgrade my-python-cookiecutter
 `src/my_python_cookiecutter/template/`. That folder is the source of truth for
 shared config, so compare against it, not against a copy in a document.
 
+`init` always makes the project its own git repo, nested if PATH is inside
+another repo, because pre-commit installs one hook per repo. A project that
+belongs inside another one, such as a uv workspace member, needs no
+`my-cookiecutter`: the root holds the shared config, so run plain `uv init`, and
+`add-lib` if other members import it.
+
 ## Tooling
 
 - **uv**: I manage every project with uv: Python, `.venv` and dependencies.

@@ -58,10 +58,16 @@ def add_pre_commit(path: Annotated[Path, typer.Argument()] = Path(".")):
         typer.echo(f"{config} already exists", err=True)
         raise typer.Exit(1)
     # pre-commit runs from a git hook, so it needs a git repo, and creating one
-    # is not this command's call.
-    repo = subprocess.run(["git", "rev-parse", "--is-inside-work-tree"], cwd=path, capture_output=True, check=False)
+    # is not this command's call. pre-commit install writes the hook of the
+    # nearest repo, so in a subfolder it would replace the parent repo's hook.
+    # --show-prefix prints the path from the repo top, which is empty only at
+    # the top.
+    repo = subprocess.run(["git", "rev-parse", "--show-prefix"], cwd=path, capture_output=True, text=True, check=False)
     if repo.returncode != 0:
         typer.echo(f"{path} is not in a git repo", err=True)
+        raise typer.Exit(1)
+    if repo.stdout.strip():
+        typer.echo(f"{path} is inside another git repo, not the top of its own; run `git init` there first", err=True)
         raise typer.Exit(1)
 
     # The template copy has no leading dot, so the wheel build does not skip it
@@ -85,12 +91,21 @@ def init(
         typer.echo(f"{pyproject} already exists", err=True)
         raise typer.Exit(1)
 
-    # uv init writes everything that differs per project: name, requires-python
-    # and git init. It also creates PATH if it does not exist yet, so every
+    # uv init writes everything that differs per project: name and
+    # requires-python. It also creates PATH if it does not exist yet, so every
     # later step runs inside PATH. --bare keeps pyproject.toml to [project]
     # alone, so the project is not installed until `add-lib`. The template only
     # appends what every project shares.
-    subprocess.run(["uv", "init", "--bare", "--vcs", "git", "--python", python, str(path)], check=True)
+    subprocess.run(["uv", "init", "--bare", "--vcs", "none", "--python", python, str(path)], check=True)
+
+    # Inside another repo, uv init --vcs git skips git init, so the project
+    # would silently join the parent repo. So we run git init ourselves, and a
+    # project there becomes a nested repo. uv then writes no .gitignore either,
+    # so we copy its content from the template.
+    subprocess.run(["git", "init", "--quiet"], cwd=path, check=True)
+    gitignore = path / ".gitignore"
+    if not gitignore.exists():
+        shutil.copyfile(TEMPLATE / "gitignore", gitignore)
     add_formatting(path)
     add_pre_commit(path)
 
